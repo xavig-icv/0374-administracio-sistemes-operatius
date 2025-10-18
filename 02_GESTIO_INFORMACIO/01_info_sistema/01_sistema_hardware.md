@@ -1,8 +1,6 @@
 # 01. Sistema i Hardware
 
-## Introducció
-
-Abans de gestionar un servidor, necessitem conèixer les seves característiques de hardware i la configuració del sistema operatiu. Aquest fitxer cobreix les comandes essencials per obtenir informació sobre el processador, memòria, dispositius connectats i configuració bàsica del sistema.
+Abans de gestionar un servidor, necessitem conèixer les seves característiques de hardware i la configuració del sistema operatiu. En aquest bloc treballarem les comandes essencials per obtenir informació sobre el processador, la memòria, els dispositius connectats i la configuració bàsica del sistema.
 
 **Objectiu**: Aprendre a identificar les especificacions tècniques d'un servidor Linux i interpretar la informació del hardware.
 
@@ -17,7 +15,7 @@ Abans de gestionar un servidor, necessitem conèixer les seves característiques
 7. `dmidecode` - Informació DMI/SMBIOS del hardware
 8. `hwinfo` - Resum complet del hardware
 
-## 1. uname - Informació del kernel
+## 1. `uname` - Informació del kernel
 
 ### Descripció
 
@@ -91,7 +89,7 @@ Quan executem `uname -a`, la sortida conté (en ordre):
 5. **Arquitectura**: `x86_64` (sistema de 64 bits)
 6. **Sistema operatiu**: `GNU/Linux`
 
-## 2. hostnamectl - Informació completa del sistema
+## 2. `hostnamectl` - Informació completa del sistema
 
 ### Descripció
 
@@ -167,7 +165,7 @@ Informació clau que ens proporciona:
 - **Architecture**: x86-64 (64 bits)
 - **Hardware Vendor/Model**: Fabricant i model del hardware (o hipervisor)
 
-## 3. lscpu - Detalls de la CPU
+## 3. `lscpu` - Detalls de la CPU
 
 ### Descripció
 
@@ -263,7 +261,7 @@ Total CPUs = Sockets × Cores per socket × Threads per core
 Exemple: 1 × 4 × 1 = 4 CPUs
 ```
 
-## 4. lspci - Dispositius PCI
+## 4. `lspci` - Dispositius PCI
 
 ### Descripció
 
@@ -345,7 +343,7 @@ Tipus de dispositius comuns:
 - **USB controller**: Controlador USB
 - **Audio device**: Targeta de so
 
-## 5. lsusb - Dispositius USB
+## 5. `lsusb` - Dispositius USB
 
 ### Descripció
 
@@ -420,7 +418,7 @@ En un servidor físic, és habitual veure:
 
 En VMs, sovint només veurem els USB virtuals.
 
-## 6. lsblk - Dispositius de bloc (discos)
+## 6. `lsblk` - Dispositius de bloc (discos)
 
 ### Descripció
 
@@ -511,7 +509,7 @@ sda (disc sencer)
 └─ sda3 (partició 3)
 ```
 
-## 7. dmidecode - Informació DMI/SMBIOS
+## 7. `dmidecode` - Informació DMI/SMBIOS
 
 ### Descripció
 
@@ -626,7 +624,7 @@ La informació DMI és molt tècnica i inclou:
 - Planificar ampliacions (tipus de RAM compatible)
 - Inventariar hardware de l'empresa
 
-## 8. hwinfo - Resum complet del hardware
+## 8. `hwinfo` - Resum complet del hardware
 
 ### Descripció
 
