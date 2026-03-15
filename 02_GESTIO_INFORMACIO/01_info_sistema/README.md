@@ -1,12 +1,10 @@
 # 01. Informació del Sistema
 
-## Introducció
-
 La recollida d'informació del sistema és una de les tasques més fonamentals i crítiques en l'administració de sistemes. Abans de poder optimitzar, solucionar problemes o prendre decisions per actuar sobre un servidor, necessitem saber **que hi ha al servidor**, **com està configurat** i **quin és el seu estat actual**.
 
 Aquest bloc es centra en dominar les comandes que ens permeten obtenir informació **estàtica** del sistema, és a dir, dades que no canvien al llarg del temps (valors constants).
 
-## Per què és tan important?
+## Per què és important?
 
 Imagina aquestes situacions que pots trobar al teu primer dia de feina:
 

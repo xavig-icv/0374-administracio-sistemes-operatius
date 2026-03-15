@@ -1,12 +1,10 @@
 # 02. Gestió de Processos
 
-## Introducció
-
 La gestió de processos és una tasca importantíssima de l'administració de sistemes Linux. Cada aplicació, servei o comanda que s'executa al servidor és considerada un procés. Saber com funcionen els processos, com gestionar-los, assignar-lis una prioritat i solucionar problemes és essencial per mantenir un servidor operatiu, eficient i segur.
 
 Aquest bloc es centra en conèixer **els processos**, **com es gestionen** i **com resoldre problemes** que puguin ocasionar aquests processos.
 
-## Per què és tan important?
+## Per què és important?
 
 Imagina aquestes situacions reals que trobaràs com a administrador de sistemes:
 
