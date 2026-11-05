@@ -38,8 +38,9 @@ sudo ldapsearch -Y EXTERNAL -H ldapi:/// -b "cn=schema,cn=config" dn
 
 `-Y EXTERNAL -H ldapi:///` utilitza el socket Unix local per autenticar-se com a root del sistema, sense necessitat d'introduir contrasenya LDAP. Només funcionarà en comandes executades des del mateix servidor.
 
-Sinó, hauriem d'utilitzar l'autenticació simple per fer accions:
-`sudo ldapadd -x -H ldap://localhost -D "cn=admin,dc=empresa,dc=com" -W -f /etc/ldap/schema/nis.ldif`
+Els canvis a la configuració (`cn=config`), com carregar esquemes, només es poden fer d'aquesta manera. L'administrador del directori (`cn=admin,dc=empresa,dc=cat`) gestiona les dades de `dc=empresa,dc=cat` amb autenticació simple (`-x -D "cn=admin,dc=empresa,dc=cat" -W`), però no pot modificar la configuració del servidor.
+
+`Nota:` A Ubuntu, els esquemes `cosine`, `nis` i `inetorgperson` ja es carreguen durant la instal·lació de `slapd`. Si els torneu a afegir, `ldapadd` mostra l'error `Duplicate attributeType`. Comproveu primer quins hi ha amb l'ordre de verificació anterior.
 
 ### Crear l'Estructura Base (DIT)
 
