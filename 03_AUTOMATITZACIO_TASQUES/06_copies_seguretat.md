@@ -59,7 +59,7 @@ rsync -avz --delete --dry-run /var/www/ copies@192.168.1.2:/srv/copies/www/   # 
 
 ### Còpies Desateses per SSH
 
-Una còpia programada no pot demanar contrasenya. Cal autenticació per **claus SSH** sense frase de pas, amb un usuari dedicat a les còpies al servidor de destinació:
+Una còpia programada no pot demanar contrasenya. Cal autenticació per **claus SSH** (vegeu la [guia de connexió SSH](../00_RECURSOS/02_connexio_ssh.md)) sense frase de pas, amb un usuari dedicat a les còpies al servidor de destinació:
 
 ```bash
 # Al servidor de destinació (192.168.1.2): usuari i directori per a les còpies
