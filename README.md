@@ -11,11 +11,30 @@ Material de teoria del mòdul 0374 del cicle formatiu de grau superior d'Adminis
 | `00_RECURSOS/`               | Escenari del laboratori i recursos comuns                                                                     | -     | -   | Disponible    |
 | `01_SERVEIS_DIRECTORI/`      | Servei de directori amb OpenLDAP: instal·lació, usuaris i grups, autenticació de clients, ACL, replicació i TLS | 14    | RA1 | Disponible    |
 | `02_GESTIO_INFORMACIO/`      | Informació del sistema, processos, serveis amb systemd, monitorització, registres i diagnosi                  | 26    | RA2 | Disponible    |
-| `03_AUTOMATITZACIO_TASQUES/` | Planificació de tasques (`cron`, `at`, temporitzadors de systemd), rotació de registres i còpies automàtiques | 26    | RA3 | En preparació |
+| `03_AUTOMATITZACIO_TASQUES/` | Planificació de tasques (`cron`, `at`, temporitzadors de systemd), rotació de registres i còpies automàtiques | 26    | RA3 | Disponible    |
 | `04_ADMINISTRACIO_REMOTA/`   | SSH amb claus, transferència de fitxers, túnels, bastionat i escriptori remot                                 | 12    | RA4 | En preparació |
 | `05_SERVIDORS_IMPRESSIO/`    | Servidor d'impressió CUPS, impressores de xarxa i clients                                                     | 14    | RA5 | En preparació |
 | `06_INTEGRACIO_SISTEMES/`    | Integració amb sistemes Windows: Samba, recursos compartits, NFS i pràctica transversal                       | 14    | RA6 | En preparació |
-| `07_SCRIPTING/`              | Scripts de Bash per administrar el sistema i introducció a PowerShell                                         | 26    | RA7 | En preparació |
+| `07_SCRIPTING/`              | Scripts de Bash per administrar el sistema                                                                    | 26    | RA7 | Disponible    |
+
+## Seqüència del Curs
+
+Les carpetes estan numerades per resultat d'aprenentatge (RA), però el curs s'imparteix en aquest ordre:
+
+| Bloc | Continguts                                                  | Carpetes                                          | RA       |
+| ---- | ----------------------------------------------------------- | ------------------------------------------------- | -------- |
+| 0    | Escenari del laboratori i connexió SSH inicial              | `00_RECURSOS/`                                    | —        |
+| 1    | Gestió de la informació i dels processos del sistema        | `02_GESTIO_INFORMACIO/`                           | RA2      |
+| 2    | Administració remota                                        | `04_ADMINISTRACIO_REMOTA/`                        | RA4      |
+| 3    | Automatització de tasques i scripting (s'imparteixen junts) | `03_AUTOMATITZACIO_TASQUES/`, `07_SCRIPTING/`     | RA3, RA7 |
+| 4    | Serveis de directori (LDAP)                                 | `01_SERVEIS_DIRECTORI/`                           | RA1      |
+| 5    | Integració de sistemes                                      | `06_INTEGRACIO_SISTEMES/`                         | RA6      |
+| 6    | Servidors d'impressió                                       | `05_SERVIDORS_IMPRESSIO/`                         | RA5      |
+
+**Projectes transversals.** Es fan al final del bloc corresponent, després de les pràctiques més senzilles:
+
+- **Monitorització i alertes** (RA3 + RA7, amb serveis del mòdul 0375): en acabar el bloc 3.
+- **GLPI amb autenticació LDAP** (RA1 + RA6, amb els serveis web i FTP del mòdul 0375): en acabar el bloc 5.
 
 ## Com Està Organitzat Cada Tema
 

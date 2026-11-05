@@ -4,22 +4,21 @@
 
 **RA3:** Gestiona l'automatització de tasques del sistema, aplicant-hi criteris d'eficiència i utilitzant comandes i eines gràfiques.
 
-`Nota:` Tema en preparació. Aquest és l'índex previst.
+Aquest tema s'imparteix conjuntament amb el **[Tema 7 (Scripting)](../07_SCRIPTING/README.md)**: allà es creen els scripts i aquí es programen perquè s'executin sols.
 
-## Continguts Previstos
+## Índex de continguts
 
-1. Introducció a l'automatització: què convé automatitzar i com comprovar-ne el resultat
-2. Tasques puntuals amb `at` i `batch`
-3. Tasques periòdiques amb `cron`: `crontab` d'usuari, `/etc/crontab` i `/etc/cron.d/`
-4. Els directoris `cron.daily`, `cron.weekly`... i `anacron` per als equips que no estan sempre engegats
-5. Temporitzadors de systemd (`.timer`): l'alternativa moderna a `cron`
-6. Rotació de registres amb `logrotate`
-7. Còpies de seguretat automàtiques amb `tar` i `rsync`
-8. Programar els scripts d'informe del Tema 2 (`informe-srv0374.sh`, `estat-srv0374.sh`) i registrar-ne el resultat amb `logger`
-9. Eines gràfiques de planificació (Cockpit, Webmin)
-10. Bones pràctiques i resolució de problemes: entorn i `PATH` de `cron`, permisos, registres
+1. [Introducció a l'Automatització de Tasques](./01_intro_automatitzacio.md)
+2. [Tasques Puntuals: `at` i `batch`](./02_at_batch.md)
+3. [Tasques Periòdiques: `cron` i `anacron`](./03_cron_anacron.md)
+4. [Temporitzadors de systemd](./04_systemd_timers.md)
+5. [Rotació de Registres amb `logrotate`](./05_logrotate.md)
+6. [Còpies de Seguretat Automàtiques](./06_copies_seguretat.md)
+7. [Eines Gràfiques: Cockpit](./07_eines_grafiques.md)
+8. [Cas Pràctic: Automatitzar l'Informe Diari del Servidor](./08_cas_practic.md)
 
 ## Relació amb Altres Temes
 
 - **Tema 2 (Gestió de la informació):** scripts d'informe, serveis de systemd, `logger` i registres.
-- **Tema 7 (Scripting):** scripts més complets per automatitzar tasques d'administració.
+- **Tema 7 (Scripting):** els scripts que es programen en aquest tema.
+- **Projecte RA3 + RA7:** sistema de monitorització amb recollida de dades programada, alertes i un tauler web.
