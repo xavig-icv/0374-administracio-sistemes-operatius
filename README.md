@@ -1,27 +1,32 @@
 # Mòdul 0374 - Administració de Sistemes Operatius
 
-## Estructura del repositori
+Material de teoria del mòdul 0374 del cicle formatiu de grau superior d'Administració de Sistemes Informàtics en Xarxa (ASIX). Cada tema explica els conceptes i les ordres amb exemples interpretats. Les pràctiques es lliuren a part i l'alumnat les resol a partir d'aquesta teoria.
 
-| BLOC/CARPETA                 | Contingut del Bloc                                                                                      | Hores | RA  |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------- | ----- | --- |
-| `00_RECURSOS/`               | Recursos generals: documentació, scripts base, referències, guies i manuals                             | -     | -   |
-| `01_SERVEIS_DIRECTORI/`      | Administració de servei de directori amb LDAP: instal·lació, configuració, gestió d'usuaris i grups     | 14    | RA1 |
-| `02_GESTIO_INFORMACIO/`      | Administració de processos i gestió d'informació del sistema: monitorització, diagnosi, troubleshooting | 26    | RA2 |
-| `03_AUTOMATITZACIO_TASQUES/` | Automatització de tasques del sistema: planificació, scripts, eficiència                                | 26    | RA3 |
-| `04_ADMINISTRACIO_REMOTA/`   | Administració remota de sistemes: SSH, escriptori remot, seguretat                                      | 12    | RA4 |
-| `05_SERVIDORS_IMPRESSIO/`    | Administració de servidors d'impressió: CUPS, impressores de xarxa                                      | 14    | RA5 |
-| `06_INTEGRACIO_SISTEMES/`    | Integració de sistemes operatius lliures i propietaris: Samba, recursos compartits                      | 14    | RA6 |
-| `07_SCRIPTING/`              | Llenguatges de guions en sistemes operatius: Bash scripting avançat, automatització                     | 26    | RA7 |
+> **Escenari del laboratori:** tots els temes fan servir les mateixes màquines i adreces (servidor `srv0374`, xarxa interna `192.168.1.0/24`), compartides amb el mòdul 0375 - Serveis de Xarxa i Internet: [00_RECURSOS/01_escenari_laboratori.md](./00_RECURSOS/01_escenari_laboratori.md)
 
-## Continguts del Mòdul
+## Estructura del Repositori
 
-`Tema 1` Administració de servei de directori  
-`Tema 2` Gestió d'informació del sistema (processos i monitorització)  
-`Tema 3` Automatització de tasques del sistema  
-`Tema 4` Administració remota de sistemes operatius  
-`Tema 5` Administració de servidors d'impressió  
-`Tema 6` Integració de sistemes operatius en xarxa  
-`Tema 7` Llenguatges de guions (scripting)
+| Carpeta                      | Continguts                                                                                                    | Hores | RA  | Estat         |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------- | ----- | --- | ------------- |
+| `00_RECURSOS/`               | Escenari del laboratori i recursos comuns                                                                     | -     | -   | Disponible    |
+| `01_SERVEIS_DIRECTORI/`      | Servei de directori amb OpenLDAP: instal·lació, usuaris i grups, autenticació de clients, ACL, replicació i TLS | 14    | RA1 | Disponible    |
+| `02_GESTIO_INFORMACIO/`      | Informació del sistema, processos, serveis amb systemd, monitorització, registres i diagnosi                  | 26    | RA2 | Disponible    |
+| `03_AUTOMATITZACIO_TASQUES/` | Planificació de tasques (`cron`, `at`, temporitzadors de systemd), rotació de registres i còpies automàtiques | 26    | RA3 | En preparació |
+| `04_ADMINISTRACIO_REMOTA/`   | SSH amb claus, transferència de fitxers, túnels, bastionat i escriptori remot                                 | 12    | RA4 | En preparació |
+| `05_SERVIDORS_IMPRESSIO/`    | Servidor d'impressió CUPS, impressores de xarxa i clients                                                     | 14    | RA5 | En preparació |
+| `06_INTEGRACIO_SISTEMES/`    | Integració amb sistemes Windows: Samba, recursos compartits, NFS i pràctica transversal                       | 14    | RA6 | En preparació |
+| `07_SCRIPTING/`              | Scripts de Bash per administrar el sistema i introducció a PowerShell                                         | 26    | RA7 | En preparació |
+
+## Com Està Organitzat Cada Tema
+
+- El `README.md` de cada carpeta és l'índex del tema i indica el resultat d'aprenentatge (RA) que treballa.
+- Els fitxers estan numerats en l'ordre recomanat de lectura (`01_...`, `02_...`).
+- Cada fitxer explica un concepte o una eina amb taules d'opcions i exemples de sortida interpretats, i acaba amb una secció de **resolució de problemes**.
+- Els exemples fan servir el servidor `srv0374` de l'escenari. Les sortides de la vostra màquina poden tenir valors diferents.
+
+## Relació amb el Mòdul 0375
+
+El servidor 0374 és alhora la porta d'enllaç de la xarxa interna i el servidor secundari dels serveis DNS i DHCP del mòdul 0375. Tots dos mòduls comparteixen el client de proves i el pla d'adreces. La pràctica transversal de GLPI integra el directori LDAP del Tema 1 amb els serveis web i FTP del mòdul 0375.
 
 ## Resultats d'Aprenentatge
 
