@@ -76,9 +76,8 @@ Host srv0374
     IdentityFile ~/.ssh/id_ed25519
 
 Host srv0375
-    HostName 192.168.1.2
+    HostName 10.0.1.38
     User xavi
-    ProxyJump srv0374
 
 Host client
     HostName 192.168.1.50
@@ -89,7 +88,10 @@ Host *
     ServerAliveInterval 60
 ```
 
-Amb aquesta configuració, `ssh srv0374` és equivalent a `ssh -i ~/.ssh/id_ed25519 xavi@10.0.1.37`, i `ssh client` arriba al client de la xarxa interna passant pel 0374 (fitxer 05).
+Amb aquesta configuració, `ssh srv0374` és equivalent a `ssh -i ~/.ssh/id_ed25519 xavi@10.0.1.37`.
+
+- Als dos servidors s'hi arriba directament per la seva IP del centre. Les IP d'aquest exemple s'han de canviar per les que el DHCP del centre hagi donat als vostres servidors (`ip -br a`).
+- El client només és a la xarxa interna: `ssh client` hi arriba passant pel 0374 (fitxer 05).
 
 | Directiva            | Funció                                                        |
 | -------------------- | ------------------------------------------------------------- |

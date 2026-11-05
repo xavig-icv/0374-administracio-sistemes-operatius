@@ -17,7 +17,7 @@ scp informe.txt srv0374:/tmp/                    # local → remot
 scp srv0374:/var/log/syslog .                    # remot → local (directori actual)
 scp -r scripts/ srv0374:~/                       # directori sencer (-r)
 scp -P 2222 informe.txt xavi@10.0.1.37:/tmp/     # port diferent (-P majúscula)
-scp -J srv0374 informe.txt xavi@192.168.1.2:/tmp/   # passant pel 0374 (fitxer 05)
+scp -J srv0374 informe.txt alumne@192.168.1.50:/tmp/  # al client, passant pel 0374 (fitxer 05)
 ```
 
 Les versions actuals d'OpenSSH fan servir internament el protocol SFTP per a `scp`.

@@ -30,12 +30,15 @@ L'accés **fora de banda** (*out-of-band*) és el que fa servir l'administrador 
 ### L'Accés Remot a l'Escenari del Laboratori
 
 ```
- Ordinador de l'aula ── SSH ──► srv0374 (10.0.1.X, enp0s3) ── xarxa interna 192.168.1.0/24 ──┬─► servidor 0375 (192.168.1.2)
-   (MobaXterm, ssh)                  gateway i servidor LDAP                                    └─► client Ubuntu (192.168.1.50)
+ Ordinador ──SSH──┬──► srv0374 [10.0.1.X | 192.168.1.1] ──┐
+ de l'aula        │    gateway del client, LDAP           ├──► client Ubuntu (192.168.1.50)
+ (MobaXterm, ssh) └──► srv0375 [10.0.1.Y | 192.168.1.2] ──┘    només a la xarxa interna
+                       serveis del mòdul 0375
 ```
 
+- Cada servidor té una IP de la xarxa del centre (`10.0.1.X`, del DHCP del centre) i una de la xarxa interna (`192.168.1.X`). Des de l'aula, s'hi arriba **directament** per la IP del centre.
 - La connexió bàsica per SSH (claus i desactivació de les contrasenyes) es fa a l'inici del curs: [00_RECURSOS/02_connexio_ssh.md](../00_RECURSOS/02_connexio_ssh.md).
-- El client de la xarxa interna no és accessible directament des de l'aula: s'hi arriba **saltant** a través del servidor 0374 (fitxer 05).
+- El client només és a la xarxa interna i no és accessible directament des de l'aula: s'hi arriba **saltant** a través del servidor 0374 (fitxer 05).
 
 ### Continguts del Tema
 

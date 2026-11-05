@@ -1,6 +1,6 @@
 ## 01. Escenari del Laboratori
 
-El mòdul 0374 es treballa amb el **servidor 0374**. És la mateixa màquina que el mòdul 0375 (Serveis de Xarxa i Internet) fa servir com a gateway i servidor secundari. Els dos mòduls comparteixen l'escenari: les mateixes màquines, les mateixes adreces i el mateix client.
+El mòdul 0374 es treballa amb el **servidor 0374**. És la mateixa màquina que el mòdul 0375 (Serveis de Xarxa i Internet) fa servir com a porta d'enllaç del client i com a servidor secundari. Els dos mòduls comparteixen l'escenari: les mateixes màquines, les mateixes adreces i el mateix client.
 
 ### Topologia
 
@@ -24,11 +24,14 @@ El mòdul 0374 es treballa amb el **servidor 0374**. És la mateixa màquina que
                                └─────────────────────┘
 ```
 
+- **Els dos servidors** tenen dues interfícies. Per `enp0s3` són a la xarxa del centre: el DHCP del centre els dona una IP `10.0.1.X`, que fan servir per **sortir a Internet** i per rebre les connexions des de l'aula. Per `enp0s8` són a la xarxa interna.
+- **El client** només és a la xarxa interna. Surt a Internet **a través del 0374** (NAT), i per connectar-s'hi per SSH des de l'aula cal saltar pel 0374 (Tema 4).
+
 ### Pla d'Adreces
 
 | IP              | Equip         | Funció al mòdul 0374                                                 |
 | --------------- | ------------- | -------------------------------------------------------------------- |
-| `192.168.1.1`   | Servidor 0374 | Sortida a Internet de la xarxa interna (NAT), servidor LDAP (Tema 1) |
+| `192.168.1.1`   | Servidor 0374 | Porta d'enllaç del client (NAT), servidor LDAP (Tema 1)              |
 | `192.168.1.2`   | Servidor 0375 | Servidor dels serveis del mòdul 0375 (client LDAP a la integració)  |
 | `192.168.1.50`  | Client Ubuntu | Client de proves (autenticació LDAP, connexions SSH...)              |
 
@@ -58,9 +61,11 @@ sudo netplan apply
 ip -br a                          # enp0s8 ha de tenir la 192.168.1.1/24
 ```
 
-### Sortida a Internet de la Xarxa Interna (NAT)
+### Sortida a Internet del Client (NAT)
 
-El client i el servidor 0375 surten a Internet a través del 0374. Calen dues coses: que el 0374 reenviï paquets entre interfícies (`ip_forward`) i que tradueixi les adreces internes per la seva IP del centre (NAT).
+El client fa servir el 0374 (`192.168.1.1`) com a porta d'enllaç. Perquè pugui sortir a Internet, al 0374 calen dues coses: que reenviï paquets entre interfícies (`ip_forward`) i que tradueixi les adreces internes per la seva IP del centre (NAT).
+
+El servidor 0375 no passa pel 0374: surt a Internet per la seva pròpia interfície del centre.
 
 **1. Activar el reenviament de paquets (permanent):**
 
@@ -108,6 +113,12 @@ ping -c1 192.168.1.1              # arriba al 0374
 ping -c1 8.8.8.8                  # surt a Internet a través del NAT del 0374
 ```
 
+**Al servidor 0375:**
+
+```bash
+ip route | grep default           # default via ... dev enp0s3: surt per la xarxa del centre, no pel 0374
+```
+
 ### Problemes Habituals
 
 | Símptoma | Causa probable | Solució |
@@ -116,3 +127,4 @@ ping -c1 8.8.8.8                  # surt a Internet a través del NAT del 0374
 | El client fa ping a `8.8.8.8` però no resol noms | No té cap servidor DNS configurat | Revisar `resolvectl dns` al client (DHCP o netplan) |
 | Després de reiniciar, el client ja no surt a Internet | La configuració no es va fer permanent | Fitxer a `/etc/sysctl.d/` i servei `nftables` habilitat |
 | `enp0s8` no té IP | Error al YAML de netplan | `sudo netplan try` mostra l'error |
+| El 0375 es queda sense Internet quan s'apaga el 0374 | Té una ruta per defecte cap a `192.168.1.1` | Al netplan del 0375, `enp0s8` no ha de tenir `routes` ni `gateway4` |

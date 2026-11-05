@@ -45,7 +45,7 @@ Les carpetes estan numerades per resultat d'aprenentatge (RA), però el curs s'i
 
 ## Relació amb el Mòdul 0375
 
-El servidor 0374 és alhora la porta d'enllaç de la xarxa interna i el servidor secundari dels serveis DNS i DHCP del mòdul 0375. Tots dos mòduls comparteixen el client de proves i el pla d'adreces. La pràctica transversal de GLPI integra el directori LDAP del Tema 1 amb els serveis web i FTP del mòdul 0375.
+El servidor 0374 és alhora la porta d'enllaç del client de la xarxa interna i el servidor secundari dels serveis DNS i DHCP del mòdul 0375. Tots dos mòduls comparteixen el client de proves i el pla d'adreces. La pràctica transversal de GLPI integra el directori LDAP del Tema 1 amb els serveis web i FTP del mòdul 0375.
 
 ## Resultats d'Aprenentatge
 

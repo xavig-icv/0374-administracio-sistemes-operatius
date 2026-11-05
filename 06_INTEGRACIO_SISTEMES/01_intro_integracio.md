@@ -26,7 +26,7 @@ En una empresa conviuen sistemes **lliures** (servidors Linux, escriptoris Ubunt
 
 ```
                      ┌──────────────────────────────────────────────┐
-  Ordinador Windows  │ srv0374 (192.168.1.1)                        │
+  Ordinador Windows  │ srv0374 (10.0.1.37 i 192.168.1.1)            │
   (xarxa del centre) │  · OpenLDAP: usuaris i grups (Tema 1)        │
    \\srv0374\... ───►│  · Samba: carpetes compartides per a Windows │
                      │  · NFS: carpetes i directoris personals      │
