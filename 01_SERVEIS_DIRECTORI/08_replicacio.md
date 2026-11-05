@@ -26,16 +26,18 @@ nano compte-replicacio.ldif
 ```
 
 ```ldif
-dn: cn=replicador,dc=empresa,dc=cat
+dn: cn=replicador,dc=educem,dc=cat
 objectClass: simpleSecurityObject
 objectClass: organizationalRole
 cn: replicador
 description: Compte de servei per a la replicació LDAP
-userPassword: {SSHA}contrasenya_replicacio_segura
+userPassword: {SSHA}z6r+3GqL3gk0y+qz+2K1QmGZk6iXQnLr
 ```
 
+A `userPassword` hi va el hash que retorna `slappasswd` (fitxer 05). La contrasenya en text pla es farà servir a la configuració del secundari (`credentials`).
+
 ```bash
-ldapadd -x -D "cn=admin,dc=empresa,dc=cat" -W -f compte-replicacio.ldif
+ldapadd -x -D "cn=admin,dc=educem,dc=cat" -W -f compte-replicacio.ldif
 ```
 
 **Donar permisos de lectura total al compte de replicació** (necessita també poder les contrasenyes per replicar-les):
@@ -48,22 +50,25 @@ nano acl-replicacio.ldif
 dn: olcDatabase={1}mdb,cn=config
 changetype: modify
 replace: olcAccess
-
-# El replicador pot llegir-ho tot, incloses contrasenyes
+# El replicador pot llegir-ho tot, incloses les contrasenyes
 olcAccess: to attrs=userPassword
   by self write
-  by dn="cn=admin,dc=empresa,dc=cat" write
-  by dn="cn=replicador,dc=empresa,dc=cat" read
+  by dn="cn=admin,dc=educem,dc=cat" write
+  by dn="cn=replicador,dc=educem,dc=cat" read
   by anonymous auth
   by * none
-
-olcAccess: to *
-  by dn="cn=replicador,dc=empresa,dc=cat" read
+olcAccess: to attrs=shadowLastChange,shadowExpire
   by self write
-  by dn="cn=admin,dc=empresa,dc=cat" write
+  by dn="cn=admin,dc=educem,dc=cat" write
+  by users read
+  by * none
+olcAccess: to *
+  by dn="cn=admin,dc=educem,dc=cat" write
   by users read
   by * none
 ```
+
+Són les ACL del fitxer 07 amb una línia més per al replicador. Com que `replace` substitueix totes les regles, cal escriure-les totes. Per a la resta d'atributs, el replicador ja té permís de lectura amb `by users read`.
 
 ```bash
 sudo ldapmodify -Y EXTERNAL -H ldapi:/// -f acl-replicacio.ldif
@@ -79,7 +84,7 @@ nano syncprov-module.ldif
 
 ```ldif
 # Carregar el mòdul syncprov
-dn: cn=module,cn=config
+dn: cn=module{0},cn=config
 changetype: modify
 add: olcModuleLoad
 olcModuleLoad: syncprov
@@ -99,9 +104,13 @@ dn: olcOverlay=syncprov,olcDatabase={1}mdb,cn=config
 objectClass: olcOverlayConfig
 objectClass: olcSyncProvConfig
 olcOverlay: syncprov
-olcSpCheckpoint: 100 10    # Checkpoint cada 100 operacions o 10 minuts
-olcSpSessionLog: 100       # Historial de les últimes 100 operacions
+# Punt de control cada 100 operacions o cada 10 minuts
+olcSpCheckpoint: 100 10
+# Historial de les últimes 100 operacions
+olcSpSessionLog: 100
 ```
+
+En LDIF, els comentaris han d'anar en una línia a part: un comentari al final d'una línia es consideraria part del valor i l'ordre donaria error.
 
 ```bash
 sudo ldapadd -Y EXTERNAL -H ldapi:/// -f syncprov-config.ldif
@@ -141,8 +150,6 @@ changetype: modify
 add: olcServerID
 olcServerID: 2 ldap://192.168.1.2
 
----
-
 # Configurar la replicació a la base de dades
 dn: olcDatabase={1}mdb,cn=config
 changetype: modify
@@ -150,15 +157,16 @@ add: olcSyncRepl
 olcSyncRepl: rid=001
   provider=ldap://192.168.1.1
   bindmethod=simple
-  binddn="cn=replicador,dc=empresa,dc=cat"
-  credentials={SSHA}contrasenya_replicacio_segura
-  searchbase="dc=empresa,dc=cat"
+  binddn="cn=replicador,dc=educem,dc=cat"
+  credentials=contrasenya_del_replicador
+  searchbase="dc=educem,dc=cat"
   attrs="*,+"
   schemachecking=on
   type=refreshAndPersist
   retry="60 10 300 +"
-  interval=00:00:05:00
 ```
+
+El fitxer conté dos canvis separats per una línia en blanc. A `credentials` hi va la contrasenya **en text pla** del compte `replicador` (no el hash): el secundari la fa servir per autenticar-se al primari. Queda desada a `cn=config`, que només pot llegir root.
 
 **Paràmetres de `syncrepl` explicats:**
 
@@ -168,12 +176,14 @@ olcSyncRepl: rid=001
 | `provider` | `ldap://...`        | Adreça del servidor primari                               |
 | `type`     | `refreshAndPersist` | Sincronitza i manté connexió oberta                       |
 | `retry`    | `"60 10 300 +"`     | Si falla: reintenta cada 60s (10 cops), després cada 300s |
-| `interval` | `00:00:05:00`       | Interval de sincronització (5 minuts)                     |
+| `interval` | `00:00:05:00`       | Només amb `type=refreshOnly`: cada quant es sincronitza (amb `refreshAndPersist` no cal) |
 | `attrs`    | `"*,+"`             | Replica tots els atributs (operacionals inclosos)         |
 
 ```bash
 sudo ldapmodify -Y EXTERNAL -H ldapi:/// -f syncrepl-consumer.ldif
 ```
+
+**Les ACL no es repliquen:** són a `cn=config`, i el que es replica són les dades de `dc=educem,dc=cat`. Cal aplicar al secundari les mateixes ACL que al primari (fitxer 07); si no, el secundari permetria llegir el directori de manera anònima. Per això les consultes de comprovació es fan amb un usuari autenticat (`-D ... -W`).
 
 ### Iniciar i Verificar la Replicació
 
@@ -192,8 +202,8 @@ sudo journalctl -u slapd -f
 **Verificar que el secundari té les dades:**
 
 ```bash
-# Al servidor secundari, consultar el directori
-ldapsearch -x -H ldap://192.168.1.2 -b "dc=empresa,dc=cat" "(objectClass=posixAccount)" uid cn
+# Al servidor secundari, consultar el directori (amb l'administrador del secundari)
+ldapsearch -x -H ldap://192.168.1.2 -D "cn=admin,dc=educem,dc=cat" -W -b "dc=educem,dc=cat" "(objectClass=posixAccount)" uid cn
 
 # Ha de retornar els mateixos usuaris que el primari
 ```
@@ -205,8 +215,8 @@ ldapsearch -x -H ldap://192.168.1.2 -b "dc=empresa,dc=cat" "(objectClass=posixAc
 sudo journalctl -u slapd -f
 
 # TERMINAL 2 - Al primari, crear un usuari nou
-ldapadd -x -D "cn=admin,dc=empresa,dc=cat" -W << EOF
-dn: uid=test-replica,ou=usuaris,dc=empresa,dc=cat
+ldapadd -x -D "cn=admin,dc=educem,dc=cat" -W << EOF
+dn: uid=test-replica,ou=usuaris,dc=educem,dc=cat
 objectClass: inetOrgPerson
 objectClass: posixAccount
 cn: Test Replica
@@ -219,8 +229,10 @@ loginShell: /bin/bash
 EOF
 
 # Al secundari, verificar que l'usuari ha aparegut
-ldapsearch -x -H ldap://192.168.1.2 -b "dc=empresa,dc=cat" "(uid=test-replica)"
+ldapsearch -x -H ldap://192.168.1.2 -D "cn=admin,dc=educem,dc=cat" -W -b "dc=educem,dc=cat" "(uid=test-replica)"
 ```
+
+El secundari és **només de lectura**: si s'hi intenta afegir o modificar una entrada, respon amb una referència al primari (`referral`) o un error. Tots els canvis es fan al primari.
 
 ### Simular una Fallada del Primari
 
@@ -232,11 +244,13 @@ sudo systemctl stop slapd
 # (el client ha d'estar configurat per consultar ambdós servidors)
 ssh pep@IP_CLIENT   # Ha de seguir funcionant via secundari
 
-# Verificar logs al secundari
+# Verificar logs al secundari: missatges similars a aquests
 sudo journalctl -u slapd -f
-# "syncrepl_message_to_op: rid=001 connection lost"
-# "do_syncrep1: rid=001 retrying"
+# slap_client_connect: URI=ldap://192.168.1.1 ... ldap_sasl_bind_s failed (-1)
+# do_syncrepl: rid=001 rc -1 retrying
 ```
+
+Quan el primari torna a estar en marxa, el secundari s'hi reconnecta sol (segons el paràmetre `retry`) i recupera els canvis pendents.
 
 **Configurar el client per utilitzar ambdós servidors** (`/etc/nslcd.conf`):
 
@@ -252,10 +266,10 @@ uri ldap://192.168.1.1 ldap://192.168.1.2
 sudo ldapsearch -Y EXTERNAL -H ldapi:/// -b "cn=config" "(objectClass=olcSyncReplConfig)" olcSyncRepl
 
 # Veure el CSN (Context Sequence Number) - indica fins on s'ha replicat
-ldapsearch -x -H ldap://192.168.1.2 -D "cn=admin,dc=empresa,dc=cat" -W -b "dc=empresa,dc=cat" -s base contextCSN
+ldapsearch -x -H ldap://192.168.1.2 -D "cn=admin,dc=educem,dc=cat" -W -b "dc=educem,dc=cat" -s base contextCSN
 
 # Comparar el CSN entre primari i secundari (han de coincidir)
-ldapsearch -x -H ldap://192.168.1.1 -D "cn=admin,dc=empresa,dc=cat" -W -b "dc=empresa,dc=cat" -s base contextCSN
+ldapsearch -x -H ldap://192.168.1.1 -D "cn=admin,dc=educem,dc=cat" -W -b "dc=educem,dc=cat" -s base contextCSN
 ```
 
 | Estat als logs      | Significat                                               |

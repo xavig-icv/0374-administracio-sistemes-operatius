@@ -24,7 +24,7 @@ sudo apt install libnss-ldapd libpam-ldapd ldap-utils nslcd
 
 # Durant la instal·lació demanarà:
 #   - URI del servidor LDAP: ldap://192.168.1.1
-#   - Base DN: dc=empresa,dc=cat
+#   - Base DN: dc=educem,dc=cat
 #   - Serveis a configurar per NSS: passwd, group, shadow
 ```
 
@@ -52,16 +52,18 @@ gid nslcd
 uri ldap://192.168.1.1
 
 # Base DN
-base dc=empresa,dc=cat
+base dc=educem,dc=cat
 
 # Bases específiques per cada tipus d'informació (opcional)
-base passwd ou=usuaris,dc=empresa,dc=cat
-base group  ou=grups,dc=empresa,dc=cat
-base shadow ou=usuaris,dc=empresa,dc=cat
+base passwd ou=usuaris,dc=educem,dc=cat
+base group  ou=grups,dc=educem,dc=cat
+base shadow ou=usuaris,dc=educem,dc=cat
 
-# Credencials per connectar (si el servidor és anònim, no cal)
-# binddn cn=admin,dc=empresa,dc=cat
-# bindpw contrasenya_admin
+# Credencials per connectar. Mentre el servidor permeti consultes anònimes no calen.
+# Quan les ACL les prohibeixin (fitxer 07), cal un compte de servei de NOMÉS LECTURA
+# (mai el compte d'administrador):
+# binddn cn=servei-lectura,dc=educem,dc=cat
+# bindpw contrasenya_del_servei
 
 # Versió del protocol
 ldap_version 3
@@ -69,10 +71,9 @@ ldap_version 3
 # Temps d'espera de connexió
 bind_timelimit 30
 timelimit 30
-
-# Verificació TLS (en producció s'ha d'activar!)
-tls_reqcert never
 ```
+
+Amb `uri ldap://` la connexió no va xifrada. La configuració de TLS (`tls_cacertfile` i `tls_reqcert`) es fa al fitxer 09.
 
 ```bash
 # Reiniciar nslcd per aplicar canvis
@@ -95,8 +96,8 @@ sudo nano /etc/nsswitch.conf
 # /etc/nsswitch.conf
 # Ordre de resolució: primer fitxers locals, després LDAP
 
-passwd:         files ldap
-group:          files ldap
+passwd:         files systemd ldap
+group:          files systemd ldap
 shadow:         files ldap
 gshadow:        files
 
@@ -123,7 +124,7 @@ getent passwd pep
 getent group
 
 # Ha de mostrar l'usuari pep amb les seves dades:
-# pep:x:1001:1001:Pep Guardiola:/home/pep:/bin/bash
+# pep:x:10001:10001:Pep Guardiola:/home/pep:/bin/bash
 ```
 
 ### Configurar PAM (Pluggable Authentication Modules)
@@ -183,7 +184,7 @@ sudo journalctl -u nslcd -f
 sudo tail -f /var/log/auth.log
 
 # Verificar connectivitat amb el servidor LDAP
-ldapsearch -x -H ldap://192.168.1.1 -b "dc=empresa,dc=cat" "(uid=pep)" cn uid
+ldapsearch -x -H ldap://192.168.1.1 -b "dc=educem,dc=cat" "(uid=pep)" cn uid
 
 # Depurar nslcd en mode verbose
 sudo systemctl stop nslcd
@@ -201,4 +202,5 @@ pamtester login pep authenticate
 | Login falla però `getent` funciona | PAM no configurat        | Revisar `/etc/pam.d/`          |
 | Home directory no es crea          | pam_mkhomedir no actiu   | Afegir a `common-session`      |
 | Connexió lenta                     | DNS no resol el servidor | Usar IP en lloc de hostname    |
-| `TLS handshake failure`            | Certificat no vàlid      | `tls_reqcert never` per proves |
+| `getent` deixa de funcionar després d'aplicar ACL | Les ACL no permeten consultes anònimes | `binddn` i `bindpw` amb un compte de servei (fitxer 07) |
+| `TLS handshake failure`            | Certificat no vàlid o sense la IP al SAN | Revisar `tls_cacertfile` i el certificat (fitxer 09) |

@@ -27,8 +27,8 @@ Durant la reconfiguració es demanen els paràmetres principals:
 
 ```
 Omit OpenLDAP server configuration?   → No
-DNS domain name: empresa.cat          ← Defineix el Base DN: dc=empresa,dc=cat
-Organization name: Empresa SL
+DNS domain name: educem.cat          ← Defineix el Base DN: dc=educem,dc=cat
+Organization name: Educem SL
 Administrator password: ****
 Confirm password: ****
 Database backend: MDB                 ← Motor de base de dades (recomanat)
@@ -77,12 +77,12 @@ sudo ss -plutn | grep slapd
 ldapsearch -x -b "" -s base namingContexts
 
 # Ha de retornar el Base DN del directori:
-# namingContexts: dc=empresa,dc=cat
+# namingContexts: dc=educem,dc=cat
 ```
 
 ```bash
 # Consultar tot el contingut del directori (autenticat com a admin)
-ldapsearch -x -D "cn=admin,dc=empresa,dc=cat" -W -b "dc=empresa,dc=cat"
+ldapsearch -x -D "cn=admin,dc=educem,dc=cat" -W -b "dc=educem,dc=cat"
 
 # -x     → Autenticació simple (sense SASL)
 # -D     → DN de l'administrador
@@ -108,13 +108,9 @@ sudo nano /etc/ldap/ldap.conf
 URI     ldap://192.168.1.1
 
 # Base DN per defecte (evita haver d'especificar -b cada vegada)
-BASE    dc=empresa,dc=cat
+BASE    dc=educem,dc=cat
 
-# Versió del protocol LDAP
-LDAP_VERSION 3
-
-# Verificació de certificat TLS (per entorns de proves)
-TLS_REQCERT allow
+# La configuració de TLS (TLS_CACERT i TLS_REQCERT) s'afegeix al fitxer 09
 ```
 
 ### Eines de Línia de Comandes (ldap-utils)
@@ -131,7 +127,7 @@ TLS_REQCERT allow
 
 ```bash
 # Exemple: buscar un usuari concret
-ldapsearch -x -D "cn=admin,dc=empresa,dc=cat" -W -b "ou=usuaris,dc=empresa,dc=cat" "(uid=joan)"
+ldapsearch -x -D "cn=admin,dc=educem,dc=cat" -W -b "ou=usuaris,dc=educem,dc=cat" "(uid=joan)"
 
 # Exemple: exportar (backup) de tot el directori
 sudo slapcat -v -l backup-ldap.ldif

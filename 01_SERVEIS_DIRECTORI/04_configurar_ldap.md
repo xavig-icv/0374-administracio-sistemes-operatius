@@ -7,7 +7,7 @@ Un cop instal·lat OpenLDAP, el servidor ja disposa d'una estructura mínima (el
 Després d'instal·lar `slapd`, el directori conté únicament el node arrel. Cal crear les Unitats Organitzatives (OU) per organitzar els usuaris i grups.
 
 ```
-dc=empresa,dc=cat              ← Creat automàticament per slapd
+dc=educem,dc=cat              ← Creat automàticament per slapd
 ├── cn=admin                   ← Creat automàticament (administrador)
 ├── ou=usuaris                 ← Cal crear-lo
 └── ou=grups                   ← Cal crear-lo
@@ -38,7 +38,7 @@ sudo ldapsearch -Y EXTERNAL -H ldapi:/// -b "cn=schema,cn=config" dn
 
 `-Y EXTERNAL -H ldapi:///` utilitza el socket Unix local per autenticar-se com a root del sistema, sense necessitat d'introduir contrasenya LDAP. Només funcionarà en comandes executades des del mateix servidor.
 
-Els canvis a la configuració (`cn=config`), com carregar esquemes, només es poden fer d'aquesta manera. L'administrador del directori (`cn=admin,dc=empresa,dc=cat`) gestiona les dades de `dc=empresa,dc=cat` amb autenticació simple (`-x -D "cn=admin,dc=empresa,dc=cat" -W`), però no pot modificar la configuració del servidor.
+Els canvis a la configuració (`cn=config`), com carregar esquemes, només es poden fer d'aquesta manera. L'administrador del directori (`cn=admin,dc=educem,dc=cat`) gestiona les dades de `dc=educem,dc=cat` amb autenticació simple (`-x -D "cn=admin,dc=educem,dc=cat" -W`), però no pot modificar la configuració del servidor.
 
 `Nota:` A Ubuntu, els esquemes `cosine`, `nis` i `inetorgperson` ja es carreguen durant la instal·lació de `slapd`. Si els torneu a afegir, `ldapadd` mostra l'error `Duplicate attributeType`. Comproveu primer quins hi ha amb l'ordre de verificació anterior.
 
@@ -54,13 +54,13 @@ nano estructura-base.ldif
 
 ```ldif
 # Unitat Organitzativa: Usuaris
-dn: ou=usuaris,dc=empresa,dc=cat
+dn: ou=usuaris,dc=educem,dc=cat
 objectClass: organizationalUnit
 ou: usuaris
 description: Usuaris del sistema
 
 # Unitat Organitzativa: Grups
-dn: ou=grups,dc=empresa,dc=cat
+dn: ou=grups,dc=educem,dc=cat
 objectClass: organizationalUnit
 ou: grups
 description: Grups del sistema
@@ -69,10 +69,10 @@ description: Grups del sistema
 **Importar l'estructura al directori:**
 
 ```bash
-sudo ldapadd -x -D "cn=admin,dc=empresa,dc=cat" -W -f estructura-base.ldif
+sudo ldapadd -x -D "cn=admin,dc=educem,dc=cat" -W -f estructura-base.ldif
 
 # Verificar que s'ha creat correctament
-sudo ldapsearch -x -b "dc=empresa,dc=cat" -s one dn
+sudo ldapsearch -x -b "dc=educem,dc=cat" -s one dn
 ```
 
 ### Configurar Índexs per Millor Rendiment
@@ -144,7 +144,7 @@ sudo systemctl start slapd
 ### Resum de l'Estructura Final
 
 ```
-dc=empresa,dc=cat
+dc=educem,dc=cat
 │
 ├── cn=admin                      ← Administrador LDAP
 │

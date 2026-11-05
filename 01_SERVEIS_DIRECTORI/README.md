@@ -1,6 +1,6 @@
 # 01 SERVEIS DE DIRECTORI - Administració de Serveis LDAP
 
-> Escenari del laboratori (servidor LDAP `192.168.1.1`, directori `dc=empresa,dc=cat`): [00_RECURSOS/01_escenari_laboratori.md](../00_RECURSOS/01_escenari_laboratori.md)
+> Escenari del laboratori (servidor LDAP `192.168.1.1`, directori `dc=educem,dc=cat`): [00_RECURSOS/01_escenari_laboratori.md](../00_RECURSOS/01_escenari_laboratori.md)
 
 **RA1:** Administra el servei de directori interpretant-ne especificacions i integrant-lo en una xarxa.
 

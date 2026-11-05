@@ -38,25 +38,26 @@ cd /etc/ldap/certs
 sudo openssl genrsa -out ca.key 4096
 
 # 2. Generar el certificat de la CA (vàlid 10 anys)
-sudo openssl req -new -x509 -days 3650 -key ca.key -out ca.crt -subj "/C=ES/ST=Catalunya/L=Barcelona/O=Empresa SL/CN=CA-LDAP"
+sudo openssl req -new -x509 -days 3650 -key ca.key -out ca.crt -subj "/C=ES/ST=Catalunya/L=Barcelona/O=Educem SL/CN=CA-LDAP"
 
 # 3. Generar la clau privada del servidor LDAP
 sudo openssl genrsa -out ldap-server.key 2048
 
 # 4. Generar la sol·licitud de certificat (CSR)
-sudo openssl req -new -key ldap-server.key -out ldap-server.csr -subj "/C=ES/ST=Catalunya/L=Barcelona/O=Empresa SL/CN=192.168.1.1"
+sudo openssl req -new -key ldap-server.key -out ldap-server.csr -subj "/C=ES/ST=Catalunya/L=Barcelona/O=Educem SL/CN=ldap.educem.cat"
 
-# IMPORTANT: El CN ha de ser la IP o el FQDN del servidor LDAP
-# que utilitzaran els clients per connectar-s'hi.
-# En un entorn real seria: CN=ldap.empresa.cat
-
-# 5. Signar el certificat del servidor amb la nostra CA
-sudo openssl x509 -req -days 3650 -in ldap-server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out ldap-server.crt
+# 5. Signar el certificat amb la nostra CA, afegint les adreces dels dos servidors (SAN)
+echo "subjectAltName=DNS:ldap.educem.cat,IP:192.168.1.1,IP:192.168.1.2" | sudo tee san.ext
+sudo openssl x509 -req -days 3650 -in ldap-server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out ldap-server.crt -extfile san.ext
 
 # 6. Verificar el certificat generat
 openssl verify -CAfile ca.crt ldap-server.crt
 # Ha de retornar: ldap-server.crt: OK
+openssl x509 -in ldap-server.crt -noout -ext subjectAltName
+# Ha de mostrar: DNS:ldap.educem.cat, IP Address:192.168.1.1, IP Address:192.168.1.2
 ```
+
+**Per què cal el SAN?** En connectar-se, el client comprova que l'adreça que ha fet servir (`192.168.1.1` o el nom `ldap.educem.cat`) apareix a l'extensió *subjectAltName* (SAN) del certificat. Els clients actuals no accepten una IP escrita només al CN. Com que aquest certificat inclou les IP dels dos servidors, el mateix certificat serveix per al primari i per al secundari.
 
 **Assignar els permisos correctes** (slapd s'executa com a usuari `openldap`):
 
@@ -125,12 +126,11 @@ sudo ss -plutn | grep slapd
 ### Verificar LDAPS
 
 ```bash
-# Provar connexió LDAPS (amb verificació de certificat desactivada per a proves)
-ldapsearch -x -H ldaps://192.168.1.1 -b "dc=empresa,dc=cat" -o tls_reqcert=never "(objectClass=posixAccount)" uid cn
-
-# Provar amb verificació completa del certificat (mode producció)
-ldapsearch -x -H ldaps://192.168.1.1 -b "dc=empresa,dc=cat" "(objectClass=posixAccount)" uid cn
+# Provar la connexió LDAPS verificant el certificat amb la nostra CA
+LDAPTLS_CACERT=/etc/ldap/certs/ca.crt ldapsearch -x -H ldaps://192.168.1.1 -D "cn=admin,dc=educem,dc=cat" -W -b "dc=educem,dc=cat" "(objectClass=posixAccount)" uid cn
 ```
+
+La variable `LDAPTLS_CACERT` indica a `ldapsearch` quina CA ha de fer servir per verificar el certificat. L'opció `-o tls_reqcert=never` desactiva la verificació: només s'ha de fer servir per diagnosticar un problema, mai com a configuració, perquè llavors qualsevol servidor es podria fer passar pel nostre.
 
 **Captura comparativa** per veure la diferència entre LDAP i LDAPS:
 
@@ -139,25 +139,33 @@ ldapsearch -x -H ldaps://192.168.1.1 -b "dc=empresa,dc=cat" "(objectClass=posixA
 sudo tcpdump -i enp0s8 port 389 or port 636 -A
 
 # Terminal 2: Connexió sense xifrar (port 389) → veurem dades en text pla
-ldapsearch -x -H ldap://192.168.1.1 -D "uid=pep,ou=usuaris,dc=empresa,dc=cat" -w "la_contrasenya" -b "dc=empresa,dc=cat" "(uid=pep)"
+ldapsearch -x -H ldap://192.168.1.1 -D "uid=pep,ou=usuaris,dc=educem,dc=cat" -w "la_contrasenya" -b "dc=educem,dc=cat" "(uid=pep)"
 
 # Terminal 2: Connexió xifrada (port 636) → veurem dades xifrades
-ldapsearch -x -H ldaps://192.168.1.1 -D "uid=pep,ou=usuaris,dc=empresa,dc=cat" -w "la_contrasenya" -b "dc=empresa,dc=cat" "(uid=pep)" -o tls_reqcert=never
+LDAPTLS_CACERT=/etc/ldap/certs/ca.crt ldapsearch -x -H ldaps://192.168.1.1 -D "uid=pep,ou=usuaris,dc=educem,dc=cat" -w "la_contrasenya" -b "dc=educem,dc=cat" "(uid=pep)"
 ```
+
+Escriure la contrasenya amb `-w` només té sentit en aquesta demostració: queda a l'historial del terminal. Normalment es fa servir `-W`, que la demana.
 
 ### Configurar els Clients per Utilitzar LDAPS
 
 **Al servidor secundari (replicació sobre TLS):**
 
-Copiar el certificat de la CA al secundari i actualitzar la configuració de `syncrepl`:
+El secundari necessita el certificat de la CA per verificar el primari. A més, com que els clients també s'hi connectaran per LDAPS, necessita el certificat i la clau del servidor (el certificat ja inclou la IP `192.168.1.2`):
 
 ```bash
-# Copiar el certificat de la CA del primari al secundari
-scp /etc/ldap/certs/ca.crt usuari@192.168.1.2:/tmp/
+# Al primari: còpia temporal de la clau que pugui llegir el vostre usuari, i enviament
+sudo install -m 600 -o "$USER" /etc/ldap/certs/ldap-server.key /tmp/
+scp /etc/ldap/certs/ca.crt /etc/ldap/certs/ldap-server.crt /tmp/ldap-server.key usuari@192.168.1.2:/tmp/
+rm /tmp/ldap-server.key
 # Al secundari:
-sudo mv /tmp/ca.crt /etc/ldap/certs/ca.crt
-sudo chown openldap:openldap /etc/ldap/certs/ca.crt
+sudo mkdir -p /etc/ldap/certs
+sudo mv /tmp/{ca.crt,ldap-server.crt,ldap-server.key} /etc/ldap/certs/
+sudo chown -R openldap:openldap /etc/ldap/certs
+sudo chmod 640 /etc/ldap/certs/ldap-server.key
 ```
+
+Al secundari també cal aplicar el mateix `tls-config.ldif` i afegir `ldaps:///` a `SLAPD_SERVICES` (apartats anteriors).
 
 ```ldif
 # Actualitzar syncrepl per utilitzar LDAPS
@@ -167,15 +175,17 @@ replace: olcSyncRepl
 olcSyncRepl: rid=001
   provider=ldaps://192.168.1.1
   bindmethod=simple
-  binddn="cn=replicador,dc=empresa,dc=cat"
-  credentials={SSHA}contrasenya_replicacio_segura
-  searchbase="dc=empresa,dc=cat"
+  binddn="cn=replicador,dc=educem,dc=cat"
+  credentials=contrasenya_del_replicador
+  searchbase="dc=educem,dc=cat"
   attrs="*,+"
   schemachecking=on
   type=refreshAndPersist
   retry="60 10 300 +"
   tls_cacert=/etc/ldap/certs/ca.crt
 ```
+
+Com al fitxer 08, `credentials` és la contrasenya en text pla del compte `replicador`.
 
 **Als clients Linux (nslcd):**
 
@@ -190,9 +200,11 @@ uri ldaps://192.168.1.1 ldaps://192.168.1.2
 # Especificar el certificat de la CA per verificar el servidor
 tls_cacertfile /etc/ldap/certs/ca.crt
 
-# En producció: always. En proves amb cert autosignat: never
-tls_reqcert never
+# Exigir un certificat vàlid, signat per la nostra CA i amb la IP al SAN
+tls_reqcert demand
 ```
+
+Amb la CA instal·lada al client i el SAN correcte, la verificació funciona també amb certificats propis: no cal desactivar-la (`tls_reqcert never`).
 
 ```bash
 # Distribuir el certificat de la CA als clients
@@ -208,9 +220,10 @@ sudo systemctl restart nslcd
 
 ```bash
 URI     ldaps://192.168.1.1
-BASE    dc=empresa,dc=cat
+BASE    dc=educem,dc=cat
 TLS_CACERT /etc/ldap/certs/ca.crt
-TLS_REQCERT allow    # 'allow' per cert autosignat, 'hard' en producció
+# Exigir un certificat vàlid (els comentaris han d'anar en una línia a part)
+TLS_REQCERT demand
 ```
 
 ### Desactivar LDAP No Xifrat (Producció)

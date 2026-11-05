@@ -61,28 +61,29 @@ nano acls-basiques.ldif
 dn: olcDatabase={1}mdb,cn=config
 changetype: modify
 replace: olcAccess
-
-# REGLA 1: Les contrasenyes només les pot llegir el propi usuari i el compte d'administrador. Ningú més.
+# REGLA 1: la contrasenya només la pot canviar el propi usuari i l'administrador.
+# Els anònims només la poden fer servir per autenticar-se. Ningú la pot llegir.
 olcAccess: to attrs=userPassword
   by self write
-  by dn="cn=admin,dc=empresa,dc=cat" write
+  by dn="cn=admin,dc=educem,dc=cat" write
   by anonymous auth
   by * none
-
-# REGLA 2: Els atributs sensibles (shadowAccount) igual
+# REGLA 2: dades de caducitat de la contrasenya (shadowAccount)
 olcAccess: to attrs=shadowLastChange,shadowExpire
   by self write
-  by dn="cn=admin,dc=empresa,dc=cat" write
+  by dn="cn=admin,dc=educem,dc=cat" write
+  by users read
   by * none
-
-# REGLA 3: La resta del directori la poden llegir tots
-# els usuaris autenticats. L'administrador pot escriure.
+# REGLA 3: la resta del directori la poden llegir els usuaris autenticats
 olcAccess: to *
-  by self write
-  by dn="cn=admin,dc=empresa,dc=cat" write
+  by dn="cn=admin,dc=educem,dc=cat" write
   by users read
   by * none
 ```
+
+**Atenció al format LDIF:** una línia en blanc indica el final d'una entrada. Dins d'un canvi (`changetype: modify`) no hi pot haver línies en blanc, i els comentaris han d'ocupar una línia sencera que comenci per `#`. Les línies que comencen per un espai són la continuació de la línia anterior.
+
+**Per què `self` no té `write` a la regla 3?** Si cada usuari pogués modificar la seva pròpia entrada, podria canviar el seu `uidNumber` a 0 i convertir-se en root als clients Linux. Els usuaris només poden canviar la seva contrasenya (regla 1).
 
 ```bash
 # Aplicar les ACLs
@@ -101,41 +102,60 @@ sudo ldapsearch -Y EXTERNAL -H ldapi:/// -b "olcDatabase={1}mdb,cn=config" olcAc
 És una pràctica recomanada crear un compte específic per a cada servei extern (sistema d'incidències, correu, VPN, etc.) amb permisos mínims, en lloc d'utilitzar el compte d'administrador.
 
 ```ldif
-# Primer creem el compte del servei
-dn: cn=glpi-incidencies,dc=empresa,dc=cat
+# Primer creem el compte del servei.
+# userPassword: enganxeu-hi el hash que retorna slappasswd (fitxer 05)
+dn: cn=glpi-incidencies,dc=educem,dc=cat
 objectClass: simpleSecurityObject
 objectClass: organizationalRole
 cn: glpi-incidencies
 description: Compte de servei per al servei web glpi
-userPassword: {SSHA}contrasenya_del_servei
+userPassword: {SSHA}z6r+3GqL3gk0y+qz+2K1QmGZk6iXQnLr
 ```
 
 ```ldif
-# ACL que permet al servei glpi llegir uid i mail
+# ACL que permet al servei glpi llegir uid, mail i cn
 dn: olcDatabase={1}mdb,cn=config
 changetype: modify
 replace: olcAccess
-
 olcAccess: to attrs=userPassword
   by self write
-  by dn="cn=admin,dc=empresa,dc=cat" write
-  by dn="cn=glpi-incidencies,dc=empresa,dc=cat" auth
+  by dn="cn=admin,dc=educem,dc=cat" write
   by anonymous auth
   by * none
-
 olcAccess: to attrs=uid,mail,cn
-  by dn="cn=glpi-incidencies,dc=empresa,dc=cat" read
-  by self read
-  by dn="cn=admin,dc=empresa,dc=cat" write
+  by dn="cn=glpi-incidencies,dc=educem,dc=cat" read
+  by dn="cn=admin,dc=educem,dc=cat" write
   by users read
   by * none
-
 olcAccess: to *
-  by self write
-  by dn="cn=admin,dc=empresa,dc=cat" write
+  by dn="cn=admin,dc=educem,dc=cat" write
   by users read
   by * none
 ```
+
+El servei GLPI no necessita cap permís sobre `userPassword`: per validar l'inici de sessió d'un usuari, l'aplicació s'autentica amb el DN i la contrasenya de l'usuari, i això ho permet `by anonymous auth`.
+
+### Clients Linux amb ACL Restrictives
+
+Amb la regla `to * ... by * none`, les consultes anònimes no poden llegir res. Els clients Linux configurats al fitxer 06 consulten el directori de manera anònima, així que **deixen de trobar els usuaris** (`getent passwd pep` no retorna res). La solució és que `nslcd` s'autentiqui amb un compte de servei de només lectura:
+
+**1.** Crear el compte `cn=servei-lectura,dc=educem,dc=cat` igual que el de l'exemple anterior (amb el seu hash).
+
+**2.** Afegir-lo al fitxer `/etc/nslcd.conf` del client:
+
+```
+binddn cn=servei-lectura,dc=educem,dc=cat
+bindpw contrasenya_del_servei
+```
+
+**3.** Reiniciar `nslcd` i comprovar que torna a funcionar:
+
+```bash
+sudo systemctl restart nslcd
+getent passwd pep
+```
+
+El compte de servei és un usuari autenticat: amb `by users read` pot llegir el directori, però no les contrasenyes. Com que `/etc/nslcd.conf` conté la seva contrasenya, només el poden llegir root i el grup `nslcd` (permisos `640`).
 
 **Permetre que els usuaris canviïn la seva pròpia contrasenya:**
 
@@ -143,7 +163,7 @@ Ja inclòs a la regla bàsica amb `by self write` a `userPassword`. Es pot verif
 
 ```bash
 # L'usuari pep canvia la seva pròpia contrasenya
-sudo ldappasswd -x -H ldap://192.168.1.1 -D "uid=pep,ou=usuaris,dc=empresa,dc=cat" -W -S
+sudo ldappasswd -x -H ldap://192.168.1.1 -D "uid=pep,ou=usuaris,dc=educem,dc=cat" -W -S
 ```
 
 **Restringir accés per IP o subxarxa** (via `peername`):
@@ -158,11 +178,11 @@ olcAccess: to *
 
 ```bash
 # Provar si un usuari anònim pot llegir contrasenyes (no hauria de poder)
-sudo ldapsearch -x -H ldap://192.168.1.1 -b "ou=usuaris,dc=empresa,dc=cat" "(uid=pep)" userPassword
+sudo ldapsearch -x -H ldap://192.168.1.1 -b "ou=usuaris,dc=educem,dc=cat" "(uid=pep)" userPassword
 
 # Provar si l'usuari pep pot llegir el seu propi perfil
-ldapsearch -x -H ldap://192.168.1.1 -D "uid=pep,ou=usuaris,dc=empresa,dc=cat" -W -b "uid=pep,ou=usuaris,dc=empresa,dc=cat"
+ldapsearch -x -H ldap://192.168.1.1 -D "uid=pep,ou=usuaris,dc=educem,dc=cat" -W -b "uid=pep,ou=usuaris,dc=educem,dc=cat"
 
 # Provar si el pep pot llegir les dades d'un altre usuari
-ldapsearch -x -H ldap://192.168.1.1 -D "uid=pep,ou=usuaris,dc=empresa,dc=cat" -W -b "uid=julia,ou=usuaris,dc=empresa,dc=cat"
+ldapsearch -x -H ldap://192.168.1.1 -D "uid=pep,ou=usuaris,dc=educem,dc=cat" -W -b "uid=julia,ou=usuaris,dc=educem,dc=cat"
 ```

@@ -36,7 +36,7 @@ El mòdul 0374 es treballa amb el **servidor 0374**. És la mateixa màquina que
 
 - **Sistema operatiu:** Ubuntu Server 24.04 LTS (servidors) i Ubuntu Desktop 24.04 (client).
 - **Nom del servidor 0374:** `srv0374`. Els exemples del temari el fan servir.
-- **Directori LDAP (Tema 1):** `dc=empresa,dc=cat`.
+- **Directori LDAP (Tema 1):** `dc=educem,dc=cat`.
 - **Domini DNS del laboratori:** `educem.cat` (es configura al mòdul 0375).
 
 ### Configuració de Xarxa del Servidor 0374

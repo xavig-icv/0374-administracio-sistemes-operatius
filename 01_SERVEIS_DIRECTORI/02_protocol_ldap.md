@@ -11,7 +11,7 @@ LDAP disposa d'un conjunt d'operacions per consultar, afegir, modificar o elimin
 El directori LDAP organitza la informació en una estructura jeràrquica d'arbre, anomenada **DIT (Directory Information Tree)**. Cada node de l'arbre és una **entrada (entry)**, i cada entrada conté un conjunt d'**atributs** amb els seus valors.
 
 ```
-dc=empresa,dc=cat                  ← Arrel (Root / Base DN)
+dc=educem,dc=cat                  ← Arrel (Root / Base DN)
 │
 ├── ou=usuaris                     ← Unitat organitzativa (OU)
 │   ├── uid=pep                    ← Usuari
@@ -40,7 +40,7 @@ Imagina un arbre on les branques representen a cada departament de l'empresa (RR
 És el camí complet i únic que identifica una entrada dins del directori. És com la ruta absoluta d'un fitxer (des de l'arrel): /home/usuari/Escriptori/ldap.txt.
 
 ```
-uid=pep,ou=usuaris,dc=empresa,dc=cat
+uid=pep,ou=usuaris,dc=educem,dc=cat
   ↑           ↑           ↑
  RDN  +  Unitat org. + Domini base = DN (tot plegat és el DN)
 ```
@@ -59,12 +59,12 @@ ou=usuaris        → RDN d'una unitat organitzativa
 
 | Atribut        | Significat          | Exemple                |
 | -------------- | ------------------- | ---------------------- |
-| `dc`           | Domain Component    | `dc=empresa`           |
+| `dc`           | Domain Component    | `dc=educem`           |
 | `ou`           | Organizational Unit | `ou=usuaris`           |
 | `cn`           | Common Name         | `cn=Pep Guardiola`     |
 | `uid`          | User ID             | `uid=pguardiola`       |
 | `sn`           | Surname             | `sn=Guardiola`         |
-| `mail`         | Adreça de correu    | `mail=pep@empresa.cat` |
+| `mail`         | Adreça de correu    | `mail=pep@educem.cat` |
 | `userPassword` | Contrasenya (hash)  | `{SSHA}abc123...`      |
 | `uidNumber`    | UID Unix            | `uidNumber=1001`       |
 | `gidNumber`    | GID Unix            | `gidNumber=1001`       |
@@ -143,7 +143,7 @@ Els filtres permeten fer cerques d'entrades amb uns criteris o filtres específi
 (objectClass=posixAccount)
 
 # Buscar usuaris amb un correu específic
-(mail=*@empresa.cat)
+(mail=*@educem.cat)
 
 # Buscar membres d'un grup (AND lògic)
 (&(objectClass=posixAccount)(gidNumber=1001))
@@ -171,19 +171,19 @@ Si es vol crear una o diverses entrades, normalment es crea un fitxer amb extens
 
 ```ldif
 # Exemple d'una entrada d'usuari en format LDIF
-dn: uid=pep,ou=usuaris,dc=empresa,dc=cat
+dn: uid=pep,ou=usuaris,dc=educem,dc=cat
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
 cn: Pep Guardiola
 sn: Guardiola
 uid: pep
-uidNumber: 1001
-gidNumber: 1001
+uidNumber: 10001
+gidNumber: 10001
 homeDirectory: /home/pep
 loginShell: /bin/bash
-mail: pep@empresa.cat
-userPassword: {SSHA}contrasenya_en_hash
+mail: pep@educem.cat
+userPassword: {SSHA}z6r+3GqL3gk0y+qz+2K1QmGZk6iXQnLr
 ```
 
 Les regles bàsiques del format LDIF:
