@@ -4,23 +4,27 @@
 
 **RA7:** Utilitza llenguatges de guions en sistemes operatius, descrivint-ne la seva aplicació i administrant serveis del sistema operatiu.
 
-`Nota:` Tema en preparació. Aquest és l'índex previst.
+Aquest tema s'imparteix conjuntament amb el **Tema 3 (Automatització de tasques)**: els scripts que es creen aquí es programen allà perquè s'executin sols.
 
-## Continguts Previstos
+## Índex de continguts
 
-1. Introducció als llenguatges de guions: Bash, PowerShell i Python
-2. El primer script: `#!/bin/bash`, permisos, execució i comentaris
-3. Variables, paràmetres (`$1`, `$#`, `$@`) i lectura de dades (`read`)
-4. Operacions aritmètiques i amb cadenes de text
-5. Condicions (`if`, `test`, `[[ ]]`, `case`) i codis de sortida
-6. Bucles (`for`, `while`, `until`)
-7. Funcions
-8. Processar fitxers i text dins dels scripts (`grep`, `awk`, `sed`)
-9. Depuració, gestió d'errors i bones pràctiques (`bash -x`, `set -euo pipefail`, `shellcheck`)
-10. Scripts d'administració: usuaris, còpies de seguretat, informes i serveis
-11. Introducció a PowerShell per administrar sistemes Windows
+1. [Introducció al Bash Scripting](./01_intro_scripting.md)
+2. [Variables i Paràmetres](./02_variables_parametres.md)
+3. [Entrada i Sortida de Dades](./03_entrada_sortida.md)
+4. [Operacions Aritmètiques](./04_operacions_aritmetiques.md)
+5. [Estructures Condicionals](./05_condicions.md)
+6. [Selecció Múltiple i Menús: `case` i `select`](./06_case_select.md)
+7. [Estructures Iteratives (Bucles)](./07_bucles.md)
+8. [Funcions](./08_funcions.md)
+9. [Vectors i Cadenes de Text](./09_vectors_cadenes.md)
+10. [Dates i Temps](./10_dates_temps.md)
+11. [Codis de Sortida, Errors i Depuració](./11_errors_depuracio.md)
+12. [Scripts d'Administració](./12_scripts_administracio.md)
+
+`Nota:` Ampliació pendent: guions en sistemes propietaris (PowerShell).
 
 ## Relació amb Altres Temes
 
 - **Tema 2 (Gestió de la informació):** ordres de consulta i filtratge (`grep`, `awk`, `cut`) i primers scripts d'informe.
-- **Tema 3 (Automatització de tasques):** programar els scripts perquè s'executin sols.
+- **Tema 3 (Automatització de tasques):** programar els scripts perquè s'executin sols (`cron`, temporitzadors de systemd).
+- **Projecte RA3 + RA7:** sistema de monitorització amb scripts de recollida de dades, alertes i un tauler web.
