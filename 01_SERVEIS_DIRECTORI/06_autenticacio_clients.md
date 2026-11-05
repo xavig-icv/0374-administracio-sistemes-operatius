@@ -140,13 +140,11 @@ grep -r "ldap\|pam_ldapd" /etc/pam.d/
 
 Quan un usuari LDAP inicia sessió per primera vegada, el seu directori `/home` no existeix al client. Cal habilitar `pam_mkhomedir`:
 
-Utilitzar la comanda:
-
 ```bash
 sudo pam-auth-update --enable mkhomedir
 ```
 
-També podries editar el sgüent fitxer i afegir la configuració al final:
+També es pot afegir la línia a mà al final del fitxer següent, però és millor fer servir `pam-auth-update`, que és qui el gestiona:
 
 ```bash
 sudo nano /etc/pam.d/common-session

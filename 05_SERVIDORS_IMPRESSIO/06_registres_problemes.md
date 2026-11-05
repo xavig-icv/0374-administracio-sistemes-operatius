@@ -15,8 +15,10 @@ sudo tail -n 5 /var/log/cups/page_log
 
 ```
 PDF xavi 12 [05/Nov/2026:10:31:02 +0100] total 1 - localhost informe.txt - -
-PDF anonymous 13 [05/Nov/2026:10:35:47 +0100] total 3 - 192.168.1.50 document.pdf - -
+PDF alumne 13 [05/Nov/2026:10:35:47 +0100] total 3 - 192.168.1.50 document.pdf - -
 ```
+
+La segona línia és un treball enviat des del client: l'usuari és el que ha enviat el client (`alumne`), encara que no existeixi al servidor.
 
 Amb les eines del Tema 2 es poden fer estadístiques del `page_log`, per exemple les pàgines impreses per cada usuari:
 

@@ -56,12 +56,12 @@ sudo ufw allow 631/tcp              # si el tallafoc està actiu
 
 ### La Impressora PDF
 
-Els treballs enviats a la impressora `PDF` es desen com a fitxers:
+Els treballs enviats a la impressora `PDF` es desen com a fitxers. La carpeta depèn de l'usuari propietari del treball:
 
-| Qui imprimeix                      | On es desa el PDF                            |
-| ---------------------------------- | -------------------------------------------- |
-| Un usuari del servidor             | `~/PDF/` de l'usuari                         |
-| Un client de la xarxa (anònim)     | `/var/spool/cups-pdf/ANONYMOUS/`             |
+| Propietari del treball                                         | On es desa el PDF                  |
+| -------------------------------------------------------------- | ---------------------------------- |
+| Un usuari que existeix al servidor                             | `~/PDF/` de l'usuari               |
+| Un usuari que no existeix al servidor (per exemple, d'un client) | `/var/spool/cups-pdf/ANONYMOUS/` |
 
 ```bash
 echo "Prova d'impressió" | lp -d PDF
@@ -84,4 +84,4 @@ sudo systemctl disable --now cups-browsed
 | La interfície web no respon des d'un altre equip            | CUPS només escolta a localhost                          | `sudo cupsctl --remote-admin --remote-any`               |
 | `Forbidden` en entrar a *Administration*                    | L'usuari no és al grup `lpadmin`                        | `sudo usermod -aG lpadmin usuari` i tornar a iniciar sessió |
 | No apareix la impressora `PDF`                              | Falta el paquet `printer-driver-cups-pdf`               | Instal·lar-lo i comprovar `lpstat -p`                    |
-| No es troba el PDF imprès                                   | S'ha imprès des d'un altre equip (usuari anònim)        | Mirar a `/var/spool/cups-pdf/ANONYMOUS/`                 |
+| No es troba el PDF imprès                                   | El treball és d'un usuari que no existeix al servidor   | Mirar a `/var/spool/cups-pdf/ANONYMOUS/`                 |

@@ -11,7 +11,7 @@ sudo lpadmin -p PDF -u allow:all                  # tothom (valor per defecte)
 lpstat -l -p PDF | grep -i -A2 allowed            # comprovar-ho
 ```
 
-Per als clients de la xarxa, l'usuari que veu CUPS és el que s'ha autenticat davant del servidor; si no hi ha autenticació, els treballs remots arriben com a anònims. En una empresa, la impressió s'integra amb els usuaris del directori (Tema 1) o del domini (Tema 6).
+**Usuaris dels clients de la xarxa.** Si el servidor no demana autenticació, CUPS accepta el nom d'usuari que envia el client sense comprovar-lo. Per això, els permisos i les quotes per usuari només són fiables si els clients s'autentiquen. En una empresa, la impressió s'integra amb els usuaris del directori (Tema 1) o del domini (Tema 6).
 
 ### Des de quines Xarxes s'Accepten Connexions
 
@@ -70,4 +70,4 @@ Quan un usuari supera la quota, els seus treballs nous es rebutgen fins que s'ac
 | `Forbidden` o `client-error-not-authorized` en imprimir       | L'usuari no és a la llista `allow` de la impressora        | `lpstat -l -p` per veure-la; corregir-la amb `lpadmin -u`   |
 | Un client remot no pot imprimir després d'editar `cupsd.conf` | La seva xarxa no és als blocs `Allow from`                 | Afegir-la i reiniciar CUPS                                  |
 | CUPS no arrenca després d'editar `cupsd.conf`                 | Error de sintaxi                                           | `sudo cupsd -t` indica la línia                             |
-| Les quotes no s'apliquen als treballs remots                  | Els treballs arriben com a anònims                         | Fer que els clients s'autentiquin                           |
+| Un usuari d'un client se salta els permisos o la quota        | Sense autenticació, CUPS es creu el nom que envia el client | Exigir autenticació als clients (`AuthType` a `cupsd.conf`) |

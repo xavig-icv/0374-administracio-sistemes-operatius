@@ -36,7 +36,7 @@ sudo ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/ldap/schema/inetorgperson.ldif
 sudo ldapsearch -Y EXTERNAL -H ldapi:/// -b "cn=schema,cn=config" dn
 ```
 
-`-Y EXTERNAL -H ldapi:///` utilitza el socket Unix local per autenticar-se com a root del sistema, sense necessitat d'introduir contrasenya LDAP. Només funcionarà en comandes executades des del mateix servidor.
+`-Y EXTERNAL -H ldapi:///` utilitza el socket Unix local per autenticar-se com a root del sistema, sense necessitat d'introduir contrasenya LDAP. Només funciona amb ordres executades al mateix servidor.
 
 Els canvis a la configuració (`cn=config`), com carregar esquemes, només es poden fer d'aquesta manera. L'administrador del directori (`cn=admin,dc=educem,dc=cat`) gestiona les dades de `dc=educem,dc=cat` amb autenticació simple (`-x -D "cn=admin,dc=educem,dc=cat" -W`), però no pot modificar la configuració del servidor.
 

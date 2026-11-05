@@ -4,7 +4,7 @@ A continuació es mostra com instal·lar i preparar un servidor OpenLDAP a la m�
 
 ### Servidor OpenLDAP (Debian/Ubuntu)
 
-OpenLDAP és l'eina per desplegar els serveis de directori en sistemes Linux. El paquet principal és `slapd` (Stand-alone LDAP Daemon), el dimoni del servidor, i `ldap-utils` que inclou les eines de línia de comandes per interactuar amb el servidor (fer consultes, afegir entrades, fer modificacions, etc.).
+OpenLDAP és l'eina per desplegar els serveis de directori en sistemes Linux. El paquet principal és `slapd` (Stand-alone LDAP Daemon), el dimoni del servidor, i `ldap-utils` que inclou les eines de línia d'ordres per interactuar amb el servidor (fer consultes, afegir entrades, fer modificacions, etc.).
 
 ```bash
 # Actualitzar repositoris
@@ -113,9 +113,9 @@ BASE    dc=educem,dc=cat
 # La configuració de TLS (TLS_CACERT i TLS_REQCERT) s'afegeix al fitxer 09
 ```
 
-### Eines de Línia de Comandes (ldap-utils)
+### Eines de Línia d'Ordres (ldap-utils)
 
-| Comanda      | Funció                                  |
+| Ordre        | Funció                                  |
 | ------------ | --------------------------------------- |
 | `ldapsearch` | Buscar entrades al directori            |
 | `ldapadd`    | Afegir entrades des d'un fitxer LDIF    |

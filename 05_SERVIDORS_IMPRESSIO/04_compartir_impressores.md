@@ -28,7 +28,7 @@ lp -d PDF-srv0374 /etc/hostname
 
 **Escriptori d'Ubuntu:** *Configuració* → *Impressores* → *Afegeix una impressora* i escriure l'adreça del servidor (`192.168.1.1`).
 
-El PDF resultant es desa al servidor a `/var/spool/cups-pdf/ANONYMOUS/`.
+El treball arriba al servidor amb l'usuari del client (`alumne`). Com que aquest usuari no existeix al servidor, el PDF es desa a `/var/spool/cups-pdf/ANONYMOUS/` (fitxer 02).
 
 ### Clients Windows
 
@@ -67,4 +67,4 @@ Actualment es recomana IPP: Windows el fa servir sense controladors addicionals 
 | El client no troba la impressora                              | La impressora o el servidor no comparteixen                | `cupsctl --share-printers` i `printer-is-shared=true`       |
 | `Unable to connect` des del client                            | Tallafoc o CUPS només escolta a localhost                  | `ufw allow 631/tcp` i `cupsctl --remote-any`                |
 | Windows diu que no pot connectar-se a la impressora           | Adreça incorrecta (cal `http://` i el nom exacte de la cua) | `http://IP:631/printers/NOM`; el nom distingeix majúscules |
-| Els treballs arriben al servidor però no es veu el PDF        | Els treballs remots es desen com a usuari anònim           | Mirar a `/var/spool/cups-pdf/ANONYMOUS/`                    |
+| Els treballs arriben al servidor però no es veu el PDF        | L'usuari del client no existeix al servidor                | Mirar a `/var/spool/cups-pdf/ANONYMOUS/`                    |
