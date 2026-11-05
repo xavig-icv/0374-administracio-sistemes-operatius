@@ -12,7 +12,7 @@ Material de teoria del mòdul 0374 del cicle formatiu de grau superior d'Adminis
 | `01_SERVEIS_DIRECTORI/`      | Servei de directori amb OpenLDAP: instal·lació, usuaris i grups, autenticació de clients, ACL, replicació i TLS | 14    | RA1 | Disponible    |
 | `02_GESTIO_INFORMACIO/`      | Informació del sistema, processos, serveis amb systemd, monitorització, registres i diagnosi                  | 26    | RA2 | Disponible    |
 | `03_AUTOMATITZACIO_TASQUES/` | Planificació de tasques (`cron`, `at`, temporitzadors de systemd), rotació de registres i còpies automàtiques | 26    | RA3 | Disponible    |
-| `04_ADMINISTRACIO_REMOTA/`   | SSH amb claus, transferència de fitxers, túnels, bastionat i escriptori remot                                 | 12    | RA4 | En preparació |
+| `04_ADMINISTRACIO_REMOTA/`   | SSH amb claus, transferència de fitxers, túnels, bastionat i escriptori remot                                 | 12    | RA4 | Disponible    |
 | `05_SERVIDORS_IMPRESSIO/`    | Servidor d'impressió CUPS, impressores de xarxa i clients                                                     | 14    | RA5 | En preparació |
 | `06_INTEGRACIO_SISTEMES/`    | Integració amb sistemes Windows: Samba, recursos compartits, NFS i pràctica transversal                       | 14    | RA6 | En preparació |
 | `07_SCRIPTING/`              | Scripts de Bash per administrar el sistema                                                                    | 26    | RA7 | Disponible    |

@@ -6,23 +6,22 @@
 
 La connexió bàsica per SSH (MobaXterm, claus i desactivació de l'accés amb contrasenya) es fa a l'inici del curs: [00_RECURSOS/02_connexio_ssh.md](../00_RECURSOS/02_connexio_ssh.md). Aquest tema en parteix i amplia l'administració remota.
 
-`Nota:` Tema en preparació. Aquest és l'índex previst.
+## Índex de continguts
 
-## Continguts Previstos
+1. [Introducció a l'Administració Remota](./01_intro_administracio_remota.md)
+2. [Configuració Avançada del Servidor i del Client SSH](./02_configuracio_ssh.md)
+3. [Gestió de Claus i Agent SSH](./03_claus_agent.md)
+4. [Transferència de Fitxers per SSH](./04_transferencia_fitxers.md)
+5. [Salts entre Servidors i Túnels SSH](./05_tunels_ssh.md)
+6. [Bastionat de l'SSH](./06_bastionat_ssh.md)
+7. [Escriptori Remot: RDP i VNC](./07_escriptori_remot.md)
+8. [Administrar Diversos Servidors Alhora](./08_diversos_servidors.md)
 
-1. Introducció a l'administració remota: SSH, escriptori remot i eines web
-2. Configuració avançada del servidor OpenSSH: port, `AllowUsers`, límits d'intents i activació per socket a Ubuntu 24.04
-3. Gestió de claus: `ssh-agent`, diverses claus i revocació
-4. Configuració del client (`~/.ssh/config`) i salts entre servidors (`ProxyJump`)
-5. Còpia de fitxers: `scp`, `sftp` i `rsync`
-6. Túnels SSH: reenviament de ports local i remot
-7. Bastionat de l'SSH: tallafoc i `fail2ban`
-8. Escriptori remot: VNC i RDP (`xrdp`) amb clients Windows i Linux
-9. Administració web amb Cockpit
-10. Administrar diversos servidors alhora (introducció a Ansible)
+L'administració web amb Cockpit es veu al [Tema 3, fitxer 07](../03_AUTOMATITZACIO_TASQUES/07_eines_grafiques.md).
 
 ## Relació amb Altres Temes
 
-- **Tema 2 (Gestió de la informació):** consultar la informació i els registres de servidors remots.
+- **Tema 2 (Gestió de la informació):** consultar la informació i els registres de servidors remots; detectar intents d'accés.
 - **Tema 3 (Automatització de tasques):** claus SSH per a les còpies de seguretat desateses.
+- **Tema 7 (Scripting):** scripts que administren diversos servidors per SSH.
 - **Mòdul 0375 (Transferència de fitxers):** SFTP, gàbies `chroot` i claus per a desplegaments.
