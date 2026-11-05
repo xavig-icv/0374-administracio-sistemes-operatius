@@ -13,7 +13,7 @@ Material de teoria del mòdul 0374 del cicle formatiu de grau superior d'Adminis
 | `02_GESTIO_INFORMACIO/`      | Informació del sistema, processos, serveis amb systemd, monitorització, registres i diagnosi                  | 26    | RA2 | Disponible    |
 | `03_AUTOMATITZACIO_TASQUES/` | Planificació de tasques (`cron`, `at`, temporitzadors de systemd), rotació de registres i còpies automàtiques | 26    | RA3 | Disponible    |
 | `04_ADMINISTRACIO_REMOTA/`   | SSH amb claus, transferència de fitxers, túnels, bastionat i escriptori remot                                 | 12    | RA4 | Disponible    |
-| `05_SERVIDORS_IMPRESSIO/`    | Servidor d'impressió CUPS, impressores de xarxa i clients                                                     | 14    | RA5 | En preparació |
+| `05_SERVIDORS_IMPRESSIO/`    | Servidor d'impressió CUPS, impressores de xarxa i clients                                                     | 14    | RA5 | Disponible    |
 | `06_INTEGRACIO_SISTEMES/`    | Integració amb sistemes Windows: Samba, recursos compartits, NFS, dominis i aplicacions amb LDAP              | 14    | RA6 | Disponible    |
 | `07_SCRIPTING/`              | Scripts de Bash per administrar el sistema                                                                    | 26    | RA7 | Disponible    |
 

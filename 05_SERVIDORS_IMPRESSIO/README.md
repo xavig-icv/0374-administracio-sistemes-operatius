@@ -4,21 +4,17 @@
 
 **RA5:** Administra servidors d'impressió descrivint-ne les funcions i integrant-los en una xarxa.
 
-`Nota:` Tema en preparació. Aquest és l'índex previst.
+## Índex de continguts
 
-## Continguts Previstos
-
-1. Introducció als sistemes d'impressió: cues, treballs, controladors i protocols (IPP, LPD, SMB, port 9100)
-2. Instal·lació de CUPS i arquitectura del servei
-3. Administració per web (port 631) i per ordres (`lpadmin`, `lpstat`, `lp`, `cancel`)
-4. Impressores de xarxa i controladors (IPP Everywhere, fitxers PPD)
-5. Impressora virtual PDF per fer proves al laboratori
-6. Gestió de cues i treballs d'impressió
-7. Compartir impressores amb clients Linux i Windows
-8. Control d'accés i quotes d'impressió
-9. Registres i resolució de problemes (`/var/log/cups/`)
+1. [Introducció als Sistemes d'Impressió](./01_intro_impressio.md)
+2. [Instal·lació de CUPS i de la Impressora PDF](./02_install_cups.md)
+3. [Gestió d'Impressores, Cues i Treballs](./03_gestio_impressores.md)
+4. [Compartir Impressores amb Clients Linux i Windows](./04_compartir_impressores.md)
+5. [Control d'Accés i Quotes d'Impressió](./05_control_acces_quotes.md)
+6. [Registres i Resolució de Problemes](./06_registres_problemes.md)
 
 ## Relació amb Altres Temes
 
-- **Tema 2 (Gestió de la informació):** gestió del servei amb systemd i consulta de registres.
-- **Tema 6 (Integració de sistemes):** impressores compartides amb clients Windows.
+- **Tema 2 (Gestió de la informació):** gestió del servei amb systemd, registres i estadístiques amb `awk`.
+- **Tema 3 (Automatització de tasques):** neteja programada de les cues i dels PDF antics.
+- **Tema 6 (Integració de sistemes):** impressores compartides per Samba amb clients Windows.
