@@ -74,7 +74,7 @@ kill -CONT $PID
 ps -o pid,stat,cmd -p $PID         # S (torna a funcionar)
 ```
 
-**`SIGHUP`:** l'acció per defecte és acabar. Un `sleep` que rep `SIGHUP` mor. En canvi, molts dimonis (`sshd`, `rsyslogd`, `nginx`) el capturen per tornar a llegir la configuració sense aturar-se: això és el que fa `systemctl reload` en molts serveis. Quan es tanca una sessió, el shell envia `SIGHUP` a les seves tasques; per això les tasques en segon pla moren en desconnectar-se (vegeu `nohup` més avall).
+**`SIGHUP`:** l'acció per defecte és acabar. Un `sleep` que rep `SIGHUP` mor. En canvi, molts dimonis (`sshd`, `rsyslogd`, `nginx`) el capturen per tornar a llegir la configuració sense aturar-se: això és el que fa `systemctl reload` en molts serveis. Quan es talla una sessió (es tanca la finestra del terminal o es perd la connexió), el shell rep `SIGHUP` i el reenvia a les seves tasques; per això les tasques en segon pla moren en desconnectar-se (vegeu `nohup` més avall).
 
 ### `killall`: Per Nom de Procés
 
@@ -159,7 +159,7 @@ sleep 300
 
 ### `nohup`: Sobreviure al Tancament de la Sessió
 
-Quan es tanca una sessió SSH, les tasques del shell reben `SIGHUP` i acaben. Una còpia de seguretat de dues hores llançada amb `&` s'aturaria en desconnectar-se. `nohup` fa que l'ordre ignori `SIGHUP`:
+Quan es talla una sessió SSH (es tanca la finestra o cau la xarxa), el shell rep `SIGHUP`, el reenvia a les seves tasques i aquestes acaben. Una còpia de seguretat de dues hores llançada amb `&` s'aturaria en desconnectar-se. `nohup` fa que l'ordre ignori `SIGHUP`:
 
 ```bash
 nohup ./copia-seguretat.sh &
@@ -167,6 +167,8 @@ nohup ./copia-seguretat.sh &
 
 nohup ./copia-seguretat.sh > copia.log 2>&1 &    # sortida a un fitxer concret
 ```
+
+`Nota:` Si se surt amb `exit`, `bash` no envia `SIGHUP` a les tasques en marxa (excepte si s'ha activat l'opció `huponexit`) i poden sobreviure. No és un comportament en què es pugui confiar: si una tasca ha de continuar, feu servir `nohup`.
 
 | Situació                                             | Solució                                                     |
 | ---------------------------------------------------- | ----------------------------------------------------------- |
