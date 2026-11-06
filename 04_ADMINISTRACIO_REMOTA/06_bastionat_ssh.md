@@ -18,16 +18,19 @@
 
 ### Tallafoc: `ufw`
 
+El tallafoc del 0374 és actiu des de l'[escenari](../00_RECURSOS/01_escenari_laboratori.md), amb l'SSH obert a tothom (`OpenSSH`). Ara el limitem a la xarxa del centre:
+
 ```bash
 sudo ufw allow from 10.0.1.0/24 to any port 22 proto tcp     # SSH només des de la xarxa del centre
-sudo ufw limit 22/tcp            # alternativa: limita les connexions repetides des d'una mateixa IP
-sudo ufw enable
+sudo ufw delete allow OpenSSH                                  # treure la regla general de l'escenari
 sudo ufw status numbered
 ```
 
-**Afegiu la regla de l'SSH abans d'activar el tallafoc**: si no, la sessió es talla i només es pot entrar per la consola de VirtualBox. `ufw limit` bloqueja una IP que obre 6 connexions o més en 30 segons.
+**Afegiu la regla nova abans d'esborrar la general**: si no, la sessió es talla i només es pot entrar per la consola de VirtualBox.
 
-`Nota:` Si el servidor 0374 fa de porta d'enllaç amb el NAT de nftables ([escenari](../00_RECURSOS/01_escenari_laboratori.md)), no activeu `ufw` sense adaptar-hi el NAT: les dues configuracions es poden trepitjar.
+Si l'SSH ha de ser accessible des de qualsevol lloc, una alternativa és `sudo ufw limit 22/tcp`: bloqueja una IP que obre 6 connexions o més en 30 segons.
+
+`Nota:` Si un altre equip de la xarxa interna s'ha de connectar per SSH al 0374, cal una regla per a la seva adreça. Per exemple, al bloc d'alta disponibilitat del mòdul 0375, el 0375 hi sincronitza fitxers: `sudo ufw allow from 192.168.1.2 to any port 22 proto tcp`.
 
 ### Bloqueig Automàtic: `fail2ban`
 
@@ -82,7 +85,7 @@ sudo unattended-upgrade --dry-run --debug           # què s'instal·laria
 
 | Problema                                                    | Causa                                                    | Solució                                                     |
 | ----------------------------------------------------------- | -------------------------------------------------------- | ----------------------------------------------------------- |
-| La sessió s'ha tallat en activar `ufw`                      | No hi havia cap regla per a l'SSH                        | Consola de VirtualBox: `sudo ufw allow 22/tcp`              |
+| La sessió s'ha tallat en canviar les regles d'`ufw`         | Cap regla no permet l'SSH des d'on us connecteu          | Consola de VirtualBox: `sudo ufw allow from 10.0.1.0/24 to any port 22 proto tcp` |
 | L'administrador ha quedat bloquejat per `fail2ban`          | Massa intents fallits des de la seva IP                  | `fail2ban-client set sshd unbanip IP` des de la consola i afegir la IP a `ignoreip` |
 | `fail2ban-client status sshd` diu que la presó no existeix  | La secció `[sshd]` no està activada o hi ha un error al fitxer | `sudo fail2ban-client -d` mostra la configuració i els errors |
 | Després de configurar `AllowGroups` ningú no pot entrar     | Cap usuari és al grup indicat                            | Consola de VirtualBox: afegir l'usuari al grup              |

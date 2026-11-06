@@ -70,6 +70,12 @@ sudo systemctl enable slapd
 sudo ss -plutn | grep slapd
 ```
 
+El 0374 té el tallafoc `ufw` actiu ([escenari](../00_RECURSOS/01_escenari_laboratori.md)). Obriu-hi el port 389 per als clients del directori, que són a la xarxa interna:
+
+```bash
+sudo ufw allow from 192.168.1.0/24 to any port 389 proto tcp
+```
+
 ### Verificar la Instal·lació
 
 ```bash

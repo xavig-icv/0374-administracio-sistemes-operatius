@@ -28,6 +28,20 @@ sudo exportfs -v                  # directoris exportats i opcions
 | `root_squash`       | (Per defecte) El root del client es tracta com l'usuari `nobody`: no és root al servidor |
 | `no_root_squash`    | El root del client és root al servidor. **Perillós**: només per a casos molt concrets |
 
+**Tallafoc.** El 0374 té `ufw` actiu ([escenari](../00_RECURSOS/01_escenari_laboratori.md)). NFS fa servir el port 2049. L'ordre `showmount` del client necessita, a més, `rpcbind` (port 111) i el servei `mountd`, que per defecte canvia de port a cada arrencada. Fixeu-lo al 20048: a la secció `[mountd]` de `/etc/nfs.conf`, descomenteu la línia `port` i deixeu-la així:
+
+```
+[mountd]
+port=20048
+```
+
+```bash
+sudo systemctl restart nfs-server
+rpcinfo -p | grep mountd                  # mountd escolta al port 20048
+sudo ufw allow from 192.168.1.0/24 to any port 111,2049,20048 proto tcp
+sudo ufw allow from 192.168.1.0/24 to any port 111,20048 proto udp
+```
+
 ### Client NFS (client Ubuntu)
 
 ```bash
@@ -85,4 +99,5 @@ sudo systemctl restart autofs
 | Els fitxers apareixen amb un propietari estrany             | L'UID del servidor no coincideix amb el del client       | Fer servir els mateixos usuaris (LDAP) als dos equips       |
 | Root del client no pot escriure al directori muntat         | `root_squash` (comportament per defecte, correcte)       | Escriure-hi amb l'usuari propietari                         |
 | `/home/ldap/pep` no apareix                                 | `autofs` munta sota demanda: el directori no existeix fins que s'hi accedeix | `cd /home/ldap/pep`; revisar `journalctl -u autofs` |
-| `showmount` no respon                                       | Tallafoc al servidor                                     | Obrir el port 2049 (i 111 per a `showmount`)                |
+| `showmount` no respon, però el muntatge funciona            | `mountd` sense port fix, o el tallafoc no deixa passar el 111 i el 20048 | Apartat del tallafoc; `rpcinfo -p 192.168.1.1` des del client |
+| `mount` es queda esperant                                   | El tallafoc del 0374 no deixa passar el port 2049        | `sudo ufw status` al servidor                               |

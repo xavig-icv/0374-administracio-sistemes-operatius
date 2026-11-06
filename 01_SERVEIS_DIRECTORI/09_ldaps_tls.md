@@ -123,6 +123,12 @@ sudo ss -plutn | grep slapd
 # Ha de mostrar els ports 389 i 636
 ```
 
+Obriu també el port 636 al tallafoc del 0374:
+
+```bash
+sudo ufw allow from 192.168.1.0/24 to any port 636 proto tcp
+```
+
 ### Verificar LDAPS
 
 ```bash

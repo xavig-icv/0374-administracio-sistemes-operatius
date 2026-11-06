@@ -18,7 +18,7 @@ La diferència amb el directori OpenLDAP del Tema 1 és que AD és un conjunt in
 
 **Samba AD DC** permet crear un domini compatible amb Active Directory en un servidor Linux: els equips Windows s'hi poden unir i administrar-lo amb les eines de Microsoft (RSAT).
 
-`Nota:` Un controlador de domini Samba AD inclou el seu propi LDAP (port 389), Kerberos (88) i DNS (53). **No pot conviure** amb OpenLDAP (Tema 1) ni amb el servidor DNS BIND (mòdul 0375) al mateix servidor. Al laboratori cal una **màquina virtual dedicada**, per exemple `192.168.1.3`.
+`Nota:` Un controlador de domini Samba AD inclou el seu propi LDAP (port 389), Kerberos (88) i DNS (53). **No pot conviure** amb OpenLDAP (Tema 1) ni amb el servidor DNS BIND (mòdul 0375) al mateix servidor. Al laboratori cal una **màquina virtual dedicada**, per exemple `192.168.1.4` (la `192.168.1.3` és la màquina de Jitsi del mòdul 0375; vegeu el pla d'adreces de l'[escenari](../00_RECURSOS/01_escenari_laboratori.md)).
 
 Esquema dels passos (en una VM dedicada amb Ubuntu Server, nom `dc1` i IP fixa):
 
